@@ -17,7 +17,11 @@ def measure():
 
 @app.route('/info', methods=['GET'])
 def info():
-	return getInfo()
+	return getInfo(False)
+
+@app.route('/fullinfo', methods=['GET'])
+def fullInfo():
+	return getInfo(True)
 
 def addMeasurement(id, amps):
 	try:
@@ -46,13 +50,13 @@ def addMeasurement(id, amps):
 	finally:
 		conn.close();
 
-def getInfo():
+def getInfo(fullInfo):
 	try:
 		conn = connect()
 		inputs = getInputs(conn)
 		result="";
 		for inp in inputs:
-			inputInfo =getInputInfo(inp, conn)
+			inputInfo =getInputInfo(inp, conn, fullInfo)
 			result+=inp.name + " - " + inputInfo
 			result+="\r\n"
 
@@ -75,8 +79,9 @@ def getInputs(conn):
 
 	return inputs
 
-def getInputInfo(input, conn):
-	highs = getHighs(input, conn)
+def getInputInfo(input, conn, fullInfo):
+	gapMinutes=3
+	highs = getHighs(input, conn, gapMinutes)
 
 	if len(highs) == 0:
 		return "N/A";
@@ -85,15 +90,21 @@ def getInputInfo(input, conn):
 	hours, remainder = divmod((lastRange.end - lastRange.start).total_seconds(), 3600)
 	minutes, seconds = divmod(remainder, 60)
 
-	return ("Kezd: " + lastRange.start.strftime("%H:%M") +  
-		", Veg: " + lastRange.end.strftime("%H:%M") +
-		", Futas: " + "%d:%d" % (hours, minutes))
+	isRunning=lastRange.end > datetime.now() - timedelta(minutes=gapMinutes)
 
-def getHighs(input, conn):
+	if fullInfo:
+		return ("Kezd: " + lastRange.start.strftime("%H:%M") +  
+			", Veg: " + lastRange.end.strftime("%H:%M") +
+			", Fut: " + "%d:%d" % (hours, minutes) + 
+			", Info: " + ("Megy" if isRunning else "All") )
+	else:
+		return ("Fut: " + "%d:%d" % (hours, minutes) + ", Info: " + ("Megy" if isRunning else "All") )
+
+def getHighs(input, conn, gapMinutes):
 	highs=[]
 	
 	lastHigh=datetime(2019,1,1)
-	gapSize=timedelta(minutes=3)
+	gapSize=timedelta(minutes=gapMinutes)
 	
 	minQueryDate = datetime.now() + timedelta(hours=-24)
 	minDate = datetime.now() + timedelta(hours=-12)
