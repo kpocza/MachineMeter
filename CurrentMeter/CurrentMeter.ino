@@ -88,7 +88,7 @@ void setupInput() {
   for(unsigned char i = 0;i < sizeof(meterInstances)/sizeof(meterInstances[0]);i++) {
     MeterInstance *m = &meterInstances[i];
     pinMode(m->param.inputPin, INPUT);
-    m->emon.current(0, m->param.amps);
+    m->emon.current(m->param.inputPin-A0, m->param.amps);
   }
 }
 
@@ -109,7 +109,7 @@ void processInput(MeterInstance *m) {
 
 void sendMeasurement(char id, double measurement) {
   ESP8266.flush();
-  ESP8266.println("AT+CIPSTART=\"TCP\",\"192.168.0.206\",5000");
+  ESP8266.println("AT+CIPSTART=\"TCP\",\"192.168.0.20\",5000");
   if(ESP8266.find("Error"))
   {
     Serial.println("AT+CIPSTART error");
@@ -120,6 +120,7 @@ void sendMeasurement(char id, double measurement) {
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
+  delay(200);
   if(ESP8266.find(">"))
   {
     ESP8266.print(getStr);
