@@ -58,9 +58,9 @@ def getInfo(fullInfo):
 		for inp in inputs:
 			inputInfo =getInputInfo(inp, conn, fullInfo)
 			result+=inp.name + " - " + inputInfo
-			result+="\r\n"
+			result+=";"
 
-		return result
+		return result + "\n"
 	except Error as e:
 		print(e)
 		return "DBERROR";
