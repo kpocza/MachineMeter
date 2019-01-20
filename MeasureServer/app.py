@@ -95,10 +95,10 @@ def getInputInfo(input, conn, fullInfo):
 	if fullInfo:
 		return ("Kezd: " + lastRange.start.strftime("%H:%M") +  
 			", Veg: " + lastRange.end.strftime("%H:%M") +
-			", Fut: " + "%d:%d" % (hours, minutes) + 
+			", Ido: " + "%d:%d" % (hours, minutes) + 
 			", Info: " + ("Megy" if isRunning else "All") )
 	else:
-		return ("Fut: " + "%d:%d" % (hours, minutes) + ", Info: " + ("Megy" if isRunning else "All") )
+		return ("Ido: " + "%d:%d" % (hours, minutes) + ", Info: " + ("Megy" if isRunning else "All") )
 
 def getHighs(input, conn, gapMinutes):
 	highs=[]
