@@ -16,8 +16,8 @@ c.execute("""	CREATE TABLE `Measurement` (
 		`Amps` double NOT NULL,
 		CONSTRAINT PK_Measure PRIMARY KEY(`Date`, `Input`)
 		);""");
-c.execute("INSERT INTO `Input`(`Id`, `Name`, `Limit`) VALUES('0', 'Mosogep', 2.0);");
-c.execute("INSERT INTO `Input`(`Id`, `Name`, `Limit`) VALUES('1', 'Szaritogep', 2.0);");
+c.execute("INSERT INTO `Input`(`Id`, `Name`, `Limit`) VALUES('0', 'Mosogep', 0.8);");
+c.execute("INSERT INTO `Input`(`Id`, `Name`, `Limit`) VALUES('1', 'Szaritogep', 0.8);");
 conn.commit();
 conn.close()
 

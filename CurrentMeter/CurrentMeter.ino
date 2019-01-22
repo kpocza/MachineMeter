@@ -8,6 +8,9 @@
 //#define WIFI_PASSWD "yyy"
 ///////////////////////////////////////
 
+#define SERVER_IP "192.168.0.20"
+#define SERVER_PORT "5000"
+
 SoftwareSerial ESP8266(2, 3); // Rx,  Tx
 
 typedef struct {
@@ -30,7 +33,7 @@ MeterInstance meterInstances[2];
 
 void setup() {
   Serial.begin(9600);
-  ESP8266.begin(115200);
+  ESP8266.begin(9600);
   
   setupParams();
   setupInput();
@@ -48,8 +51,6 @@ void connectToWifi() {
   Serial.println("Connecting to Wifi");
   ESP8266.println("AT+RST");
   delay(2000);
-  
-  unsigned char tries=0;
   
   while(true)
   {
@@ -109,7 +110,7 @@ void processInput(MeterInstance *m) {
 
 void sendMeasurement(char id, double measurement) {
   ESP8266.flush();
-  ESP8266.println("AT+CIPSTART=\"TCP\",\"192.168.0.20\",5000");
+  ESP8266.println(String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT);
   if(ESP8266.find("Error"))
   {
     Serial.println("AT+CIPSTART error");
@@ -120,15 +121,25 @@ void sendMeasurement(char id, double measurement) {
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
-  delay(200);
+  delay(100);
   if(ESP8266.find(">"))
   {
     ESP8266.print(getStr);
     Serial.println(getStr);
-    delay(500);
-    while (ESP8266.available()) 
+    
+    long int time = millis();
+    long int timeout = 1000;
+    int sizeLimit = 256;
+    int cnt = 0;
+    String resp="";
+    while(millis() - time < timeout && cnt < sizeLimit && !resp.endsWith("CLOSED"))
     {
-      ESP8266.readStringUntil('\n');
+      while (ESP8266.available() > 0 && !resp.endsWith("CLOSED")) 
+      {
+        char c = ESP8266.read();
+        resp += c;
+        cnt++;
+      }
     }
   }
   else
