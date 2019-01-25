@@ -25,7 +25,7 @@ typedef struct {
   MeterParam param;
   EnergyMonitor emon;
   
-  double sumMeasure;
+  double maxMeasure;
   char counter;
 } MeterInstance;
 
@@ -72,7 +72,7 @@ void setupParams() {
   m->param.inputPin = A0;
   m->param.amps = 30;
   m->param.calibration = 667;
-  m->sumMeasure = 0.0;
+  m->maxMeasure = 0.0;
   m->counter = 0;
   m->param.sendLimit = 2;
   m = &meterInstances[1];
@@ -80,7 +80,7 @@ void setupParams() {
   m->param.inputPin = A1;
   m->param.amps = 30;
   m->param.calibration = 667;
-  m->sumMeasure = 0.0;
+  m->maxMeasure = 0.0;
   m->counter = 0;
   m->param.sendLimit = 2;
 }
@@ -95,16 +95,16 @@ void setupInput() {
 
 void processInput(MeterInstance *m) {
   double irms = m->emon.calcIrms(m->param.calibration);
-  m->sumMeasure+=irms;
+  if(irms > m->maxMeasure) {
+    m->maxMeasure=irms;
+  }
   m->counter++;
+  Serial.println(m->param.inputPin + String(": ") + irms);
 
   if(m->counter >= m->param.sendLimit) {
-    double avg = m->sumMeasure / m->counter;
-    m->sumMeasure = 0.0;
+    sendMeasurement(m->param.id, m->maxMeasure);
+    m->maxMeasure = 0.0;
     m->counter = 0;
-    sendMeasurement(m->param.id, avg);
-    Serial.print(m->param.inputPin + String(": "));
-    Serial.println(irms);
   }
 }
 
@@ -125,7 +125,7 @@ void sendMeasurement(char id, double measurement) {
   if(ESP8266.find(">"))
   {
     ESP8266.print(getStr);
-    Serial.println(getStr);
+    Serial.print(getStr);
     
     long int time = millis();
     long int timeout = 1000;
