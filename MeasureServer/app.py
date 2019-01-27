@@ -57,8 +57,7 @@ def getInfo(fullInfo):
 		result="";
 		for inp in inputs:
 			inputInfo =getInputInfo(inp, conn, fullInfo)
-			result+=inp.name + " - " + inputInfo
-			result+=";"
+			result+=inputInfo + ";"
 
 		return result + "\n"
 	except Error as e:
@@ -74,37 +73,46 @@ def getInputs(conn):
 	inputs=[]
 	c = conn.cursor();
 
-	for row in c.execute("SELECT `Id`, `Name`, `Limit` FROM `Input`"):
-		inputs.append(Input(row[0], row[1], row[2]))
+	for row in c.execute("SELECT `Id`, `Name`, `Limit`, `GapSize` FROM `Input`"):
+		inputs.append(Input(row[0], row[1], row[2], row[3]))
 
 	return inputs
 
 def getInputInfo(input, conn, fullInfo):
-	gapMinutes=3
-	highs = getHighs(input, conn, gapMinutes)
+	highs = getHighs(input, conn)
 
 	if len(highs) == 0:
-		return "N/A";
+		return input.name + " - N/A";
 
 	lastRange = highs[-1]
 	hours, remainder = divmod((lastRange.end - lastRange.start).total_seconds(), 3600)
 	minutes, seconds = divmod(remainder, 60)
 
-	isRunning=lastRange.end > datetime.now() - timedelta(minutes=gapMinutes)
+	isRunning=lastRange.end > datetime.now() - timedelta(minutes=input.gapsize)
+	minutesSinceLastMeasure = (datetime.now() - lastRange.end).total_seconds() / 60 - input.gapsize
 
 	if fullInfo:
-		return ("Kezd: " + lastRange.start.strftime("%H:%M") +  
+		return (input.name + " - " +
+			"Kezd: " + lastRange.start.strftime("%H:%M") +  
 			", Veg: " + lastRange.end.strftime("%H:%M") +
 			", Ido: " + "%d:%d" % (hours, minutes) + 
-			", Info: " + ("Megy" if isRunning else "All") )
+			(", Megy" if isRunning else (", All: " + "%d" % (minutesSinceLastMeasure) + "p") ) )
 	else:
-		return ("Ido: " + "%d:%d" % (hours, minutes) + ", Info: " + ("Megy" if isRunning else "All") )
+		return (input.name + " - " + 
+			(
+				("Megy (" + "%d:%d"%(hours, minutes) + ")") if isRunning else
+				(
+					"All" if minutesSinceLastMeasure > 30 else
+					("All (" + "%d:%d" % (hours, minutes) +", "+ "%d" % (minutesSinceLastMeasure) + "p)")
+				)
+			)
+			)
 
-def getHighs(input, conn, gapMinutes):
+def getHighs(input, conn):
 	highs=[]
 	
 	lastHigh=datetime(2019,1,1)
-	gapSize=timedelta(minutes=gapMinutes)
+	gapSize=timedelta(minutes=input.gapsize)
 	
 	minQueryDate = datetime.now() + timedelta(hours=-24)
 	minDate = datetime.now() + timedelta(hours=-12)
@@ -129,10 +137,11 @@ def connect():
 	return sqlite3.connect("measure.db")
 
 class Input:
-	def __init__(self, id, name, limit):
+	def __init__(self, id, name, limit, gapsize):
 		self.id = id
-		self.name = name;
+		self.name = name
 		self.limit = limit
+		self.gapsize = gapsize
 
 class Measurement:
 	def __init__(self, date, input, amps):
