@@ -1,5 +1,5 @@
 #include <SoftwareSerial.h>
-#include <EmonLib.h>
+#include "DiffEmonLib.h"
 #include "WifiParameters.h"
 
 ///////////////////////////////////////
@@ -16,6 +16,7 @@ SoftwareSerial ESP8266(2, 3); // Rx,  Tx
 typedef struct {
   unsigned char id;
   unsigned char inputPin;
+  unsigned char zeroPin;
   unsigned char amps;
   unsigned short calibration;
   char sendLimit;
@@ -23,7 +24,7 @@ typedef struct {
 
 typedef struct {
   MeterParam param;
-  EnergyMonitor emon;
+  DiffEnergyMonitor emon;
   
   double maxMeasure;
   char counter;
@@ -70,6 +71,7 @@ void setupParams() {
   MeterInstance *m = &meterInstances[0];
   m->param.id = '0';
   m->param.inputPin = A0;
+  m->param.zeroPin = A2;
   m->param.amps = 30;
   m->param.calibration = 667;
   m->maxMeasure = 0.0;
@@ -78,6 +80,7 @@ void setupParams() {
   m = &meterInstances[1];
   m->param.id = '1';
   m->param.inputPin = A1;
+  m->param.zeroPin = A3;
   m->param.amps = 30;
   m->param.calibration = 667;
   m->maxMeasure = 0.0;
@@ -88,8 +91,9 @@ void setupParams() {
 void setupInput() {
   for(unsigned char i = 0;i < sizeof(meterInstances)/sizeof(meterInstances[0]);i++) {
     MeterInstance *m = &meterInstances[i];
+    pinMode(m->param.zeroPin, INPUT);
     pinMode(m->param.inputPin, INPUT);
-    m->emon.current(m->param.inputPin-A0, m->param.amps);
+    m->emon.current(m->param.inputPin-A0, m->param.zeroPin-A0,m->param.amps);
   }
 }
 

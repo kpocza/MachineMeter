@@ -28,7 +28,8 @@ void loop() {
   String result = getInfo();
   Serial.println(result);
 
-  show(result);
+   lcd.begin(20, 4);
+ show(result);
   delay(1000);
 }
 
