@@ -178,7 +178,7 @@ void DiffEnergyMonitor::calcVI(unsigned int crossings, unsigned int timeout)
 }
 
 //--------------------------------------------------------------------------------------
-double DiffEnergyMonitor::calcIrms(unsigned int Number_of_Samples)
+double DiffEnergyMonitor::calcIrms(unsigned int maxMillis)
 {
 
   #if defined emonTxV3
@@ -187,30 +187,38 @@ double DiffEnergyMonitor::calcIrms(unsigned int Number_of_Samples)
     int SupplyVoltage = readVcc();
   #endif
 
-
-  for (unsigned int n = 0; n < Number_of_Samples; n++)
+  unsigned long start = millis();
+  int numberOfSamples = 0;
+  lastI = -1;
+  lastZ = -1;
+  do
   {
     sampleI = analogRead(inPinI);
     // MODIFICATION: kpocza@kpocza.net
     // measure relative to the "midpoint" to reduce noise
     sampleZ = analogRead(zePinI);
-   // Serial.println(sampleI + String(" - ") + sampleZ);
-    sampleI = (sampleI - sampleZ) + 512;
 
-    // Digital low pass filter extracts the 2.5 V or 1.65 V dc offset,
-    //  then subtract this - signal is now centered on 0 counts.
-    offsetI = (offsetI + (sampleI-offsetI)/1024);
-    filteredI = sampleI - offsetI;
+    if(lastI == -1)
+      lastI = sampleI;
+    if(lastZ == -1)
+      lastZ = sampleI;
+    
+    filteredI = (double)(sampleI + lastI)/2.0 - (double)(sampleZ + lastZ)/2.0;
 
     // Root-mean-square method current
     // 1) square current values
     sqI = filteredI * filteredI;
     // 2) sum
     sumI += sqI;
-  }
+    
+    numberOfSamples++;
+    
+    lastI = sampleI;
+    lastZ = sampleZ;
+  } while(millis() - start < maxMillis);
 
   double I_RATIO = ICAL *((SupplyVoltage/1000.0) / (ADC_COUNTS));
-  Irms = I_RATIO * sqrt(sumI / Number_of_Samples);
+  Irms = I_RATIO * sqrt(sumI / numberOfSamples);
 
   //Reset accumulators
   sumI = 0;

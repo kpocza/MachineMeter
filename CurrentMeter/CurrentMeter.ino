@@ -44,8 +44,8 @@ void setup() {
 void loop() {
   for(unsigned char i = 0;i < sizeof(meterInstances)/sizeof(meterInstances[0]);i++) {
     processInput(&meterInstances[i]);
+    delay(500);
   }
-  delay(1000);
 }
 
 void connectToWifi() {
@@ -71,18 +71,18 @@ void setupParams() {
   MeterInstance *m = &meterInstances[0];
   m->param.id = '0';
   m->param.inputPin = A0;
-  m->param.zeroPin = A2;
+  m->param.zeroPin = A1;
   m->param.amps = 30;
-  m->param.calibration = 667;
+  m->param.calibration = 160;
   m->maxMeasure = 0.0;
   m->counter = 0;
   m->param.sendLimit = 2;
   m = &meterInstances[1];
   m->param.id = '1';
-  m->param.inputPin = A1;
+  m->param.inputPin = A2;
   m->param.zeroPin = A3;
   m->param.amps = 30;
-  m->param.calibration = 667;
+  m->param.calibration = 160;
   m->maxMeasure = 0.0;
   m->counter = 0;
   m->param.sendLimit = 2;

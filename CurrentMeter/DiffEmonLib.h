@@ -53,7 +53,7 @@ class DiffEnergyMonitor
     void currentTX(unsigned int _channel, double _ICAL);
 
     void calcVI(unsigned int crossings, unsigned int timeout);
-    double calcIrms(unsigned int NUMBER_OF_SAMPLES);
+    double calcIrms(unsigned int maxMillis);
     void serialprint();
 
     long readVcc();
@@ -82,7 +82,8 @@ class DiffEnergyMonitor
     int sampleV;                        //sample_ holds the raw analog read value
     int sampleI;
     int sampleZ;
-    int zeroI;
+    int lastI;
+    int lastZ;
 
     double lastFilteredV,filteredV;          //Filtered_ is the raw analog value minus the DC offset
     double filteredI;
