@@ -2,7 +2,11 @@
 #include <LiquidCrystal.h>
 #include "WifiParameters.h"
 
-LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+// test
+// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+
+// prod
+ LiquidCrystal lcd(2, 3, 4, 5, 11, 12);
 
 ///////////////////////////////////////
 // format of WifiParameters.h:
@@ -14,6 +18,8 @@ LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
 #define SERVER_PORT "5000"
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
+int counter;
+String oldResult;
 
 void setup() {
   Serial.begin(9600);
@@ -22,15 +28,25 @@ void setup() {
 
   connectToWifi();
   lcd.begin(20, 4);
+  counter = 0;
+  oldResult = "";
 }
 
+
 void loop() {
+  delay(1000);
+
   String result = getInfo();
   Serial.println(result);
 
-   lcd.begin(20, 4);
- show(result);
-  delay(1000);
+  if(result!= oldResult || counter%5 == 0)
+  {
+    lcd.begin(20, 4);
+    show(result);
+  }
+
+  counter++;
+  oldResult = result;
 }
 
 String getInfo() {
