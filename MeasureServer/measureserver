@@ -1,0 +1,10 @@
+CONFIG = {
+    'mode': 'wsgi',
+    'working_dir': '/home/bananapi/MachineMeter/MeasureServer',
+    'args': (
+        '--bind=0.0.0.0:5000',
+	'--log-level=DEBUG',
+	'--user=root',
+        'wsgi:app',
+    ),
+}

@@ -1,4 +1,4 @@
-#!flask/bin/python
+#!/usr/bin/python
 from flask import Flask, request
 import sqlite3
 from sqlite3 import Error
