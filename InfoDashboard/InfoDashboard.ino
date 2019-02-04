@@ -30,16 +30,15 @@ void setup() {
   lcd.begin(20, 4);
   counter = 0;
   oldResult = "";
+  delay(1000);
 }
 
 
 void loop() {
-  delay(1000);
-
   String result = getInfo();
   Serial.println(result);
 
-  if(result!= oldResult || counter%5 == 0)
+  if(result!= oldResult || counter%3 == 0)
   {
     lcd.begin(20, 4);
     show(result);
@@ -47,6 +46,8 @@ void loop() {
 
   counter++;
   oldResult = result;
+  
+  delay(5000);
 }
 
 String getInfo() {
