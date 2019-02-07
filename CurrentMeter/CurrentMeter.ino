@@ -121,7 +121,7 @@ void sendMeasurement(char id, double measurement) {
     return;
   }
 
-  String getStr = "GET /measure?id="+ String(id)+"&amps="+ String(measurement)+"\r\n\r\n";
+  String getStr = "GET /measure?id="+ String(id)+"&amps="+ String(measurement)+" HTTP/1.0\r\n\r\n";
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 

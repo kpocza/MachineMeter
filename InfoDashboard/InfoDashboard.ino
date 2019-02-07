@@ -60,7 +60,7 @@ String getInfo() {
   }
 
   String resp="";
-  String getStr = "GET /info\r\n\r\n";
+  String getStr = "GET /info HTTP/1.0\r\n\r\n";
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
@@ -93,6 +93,15 @@ String getInfo() {
   short startIdx = resp.indexOf("+IPD");
   if(startIdx == -1)
     return "Bad response";
+
+  short lastStartIdx = -1;
+  do
+  {
+    lastStartIdx = startIdx;
+    startIdx = resp.indexOf("+IPD", startIdx+1);
+  } while(startIdx!= -1);
+
+  startIdx = lastStartIdx;
 
   startIdx = resp.indexOf(":", startIdx);
   if(startIdx == -1)
