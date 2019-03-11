@@ -56,7 +56,7 @@ String getInfo() {
   if(ESP8266.find("Error"))
   {
     Serial.println("AT+CIPSTART error");
-    return;
+    return "Server/network error";
   }
 
   String resp="";
@@ -64,7 +64,7 @@ String getInfo() {
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
-  delay(200);
+  delay(10);
   if(ESP8266.find(">"))
   {
     ESP8266.print(getStr);
@@ -88,8 +88,10 @@ String getInfo() {
   {
     Serial.println("AT+CIPCLOSE");
     ESP8266.println("AT+CIPCLOSE");     
+    return "Comm error";
   }
 
+  Serial.println(resp);
   short startIdx = resp.indexOf("+IPD");
   if(startIdx == -1)
     return "Bad response";
