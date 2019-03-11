@@ -125,12 +125,13 @@ def getHighs(input, conn):
 
 		if amps > input.limit:
 			if lastHigh + gapSize < date or len(highs) == 0:
-				highs.append(DateRange(date, date))
+				highs.append(DateRange(date, date, 1))
 			else:
 				highs[-1].end = date
+				highs[-1].cnt = highs[-1].cnt + 1
 
 			lastHigh = date
-	highs=[item for item in highs if item.start > minDate]
+	highs=[item for item in highs if item.start > minDate and item.cnt > 1]
 	return highs
 
 def connect():
@@ -150,9 +151,10 @@ class Measurement:
 		self.amps = amps
 
 class DateRange:
-	def __init__(self, start, end):
+	def __init__(self, start, end, cnt):
 		self.start = start
 		self.end = end
+		self.cnt = cnt
 
 if __name__ == '__main__':
 	app.run(debug=True,host="0.0.0.0",port=5000)
