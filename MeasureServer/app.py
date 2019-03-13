@@ -23,6 +23,15 @@ def info():
 def fullInfo():
 	return getInfo(True)
 
+@app.route('/webinfo', methods=['GET'])
+def webInfo():
+	return getWebInfo(False)
+
+@app.route('/fullwebinfo', methods=['GET'])
+def fullWebInfo():
+	return getWebInfo(True)
+
+
 def addMeasurement(id, amps):
 	try:
 		conn = connect()
@@ -66,6 +75,25 @@ def getInfo(fullInfo):
 	except Exception as e:
 		print(e)
 		return "ERROR";
+	finally:
+		conn.close();
+
+def getWebInfo(fullInfo):
+	try:
+		conn = connect()
+		inputs = getInputs(conn)
+		result="<!DOCTYPE html><html><head><meta http-equiv=""refresh"" content=""10""></head><body>";
+		for inp in inputs:
+			inputInfo =getInputInfo(inp, conn, fullInfo)
+			result+=inputInfo + "<br />"
+
+		return result + "</body></html>"
+	except Error as e:
+		print(e)
+		return "<html><body>DBERROR</body></html>";
+	except Exception as e:
+		print(e)
+		return "<html><body>ERROR</body></html>";
 	finally:
 		conn.close();
 

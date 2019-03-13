@@ -53,7 +53,7 @@ void loop() {
 String getInfo() {
   ESP8266.flush();
   ESP8266.println(String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT);
-  if(ESP8266.find("Error"))
+  if(ESP8266.find("ERROR"))
   {
     Serial.println("AT+CIPSTART error");
     return "Server/network error";
