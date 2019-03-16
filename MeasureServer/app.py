@@ -83,11 +83,12 @@ def getWebInfo(fullInfo):
 		conn = connect()
 		inputs = getInputs(conn)
 		result="<!DOCTYPE html><html><head><meta http-equiv=""refresh"" content=""10""></head><body>";
+                result+= "<font size=""32"">"
 		for inp in inputs:
 			inputInfo =getInputInfo(inp, conn, fullInfo)
 			result+=inputInfo + "<br />"
 
-		return result + "</body></html>"
+		return result + "</font></body></html>"
 	except Error as e:
 		print(e)
 		return "<html><body>DBERROR</body></html>";
