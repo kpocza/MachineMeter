@@ -25,9 +25,14 @@ void setup() {
   Serial.begin(9600);
   ESP8266.begin(9600);
   lcd.begin(20, 4);
-
+  lcd.setCursor(0,0);
+  lcd.print("Connecting");
+  
   connectToWifi();
   lcd.begin(20, 4);
+  lcd.setCursor(0,0);
+  lcd.print("Connected ");
+
   counter = 0;
   oldResult = "";
   delay(1000);
@@ -40,7 +45,7 @@ void loop() {
 
   if(result!= oldResult || counter%3 == 0)
   {
-    lcd.begin(20, 4);
+    //lcd.begin(20, 4);
     show(result);
   }
 
@@ -53,6 +58,7 @@ void loop() {
 String getInfo() {
   ESP8266.flush();
   ESP8266.println(String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT);
+  delay(10);
   if(ESP8266.find("ERROR"))
   {
     Serial.println("AT+CIPSTART error");
@@ -64,7 +70,7 @@ String getInfo() {
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
-  delay(10);
+  delay(100);
   if(ESP8266.find(">"))
   {
     ESP8266.print(getStr);
@@ -91,29 +97,45 @@ String getInfo() {
     return "Comm error";
   }
 
-  Serial.println(resp);
-  short startIdx = resp.indexOf("+IPD");
-  if(startIdx == -1)
+  //Serial.println(resp);
+
+  String relevant = "";
+  short ipdIndex = -1;
+  short lastStartIndex = -1;
+  short idxIndex = -1;
+  short rounds = 0;
+  do {
+    ipdIndex = resp.indexOf("+IPD", lastStartIndex!= -1 ? lastStartIndex : 0);
+    if(ipdIndex != -1)
+    {
+      short startIdx = resp.indexOf(":", ipdIndex);
+      if(startIdx == -1)
+        return "Bad response";
+        
+      if(lastStartIndex!= -1)
+        relevant = relevant + resp.substring(lastStartIndex, ipdIndex);
+
+      lastStartIndex = startIdx + 1;
+    }
+    else
+    {
+      if(lastStartIndex!= -1)
+      {
+        short endIdx = resp.lastIndexOf("CLOSED");
+        relevant = relevant + resp.substring(lastStartIndex, endIdx-1);
+        break;
+      }
+    }
+    rounds++;
+    if(rounds > 5)
+      return "Bad response";
+  } while(ipdIndex!= -1);
+  
+  short contentIdx = relevant.lastIndexOf("\r\n\r\n");
+  if(contentIdx == -1)
     return "Bad response";
 
-  short lastStartIdx = -1;
-  do
-  {
-    lastStartIdx = startIdx;
-    startIdx = resp.indexOf("+IPD", startIdx+1);
-  } while(startIdx!= -1);
-
-  startIdx = lastStartIdx;
-
-  startIdx = resp.indexOf(":", startIdx);
-  if(startIdx == -1)
-    return "Bad response";
-
-  short endIdx = resp.lastIndexOf("CLOSED");
-  if(endIdx == -1)
-    return "Bad response";
-
-  resp = resp.substring(startIdx+1, endIdx-1);
+  resp = relevant.substring(contentIdx+4);
   
   return resp;
 }
