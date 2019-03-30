@@ -19,6 +19,7 @@
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 int counter;
+int beginCounter;
 String oldResult;
 
 void setup() {
@@ -34,6 +35,7 @@ void setup() {
   lcd.print("Connected ");
 
   counter = 0;
+  beginCounter = 0;
   oldResult = "";
   delay(1000);
 }
@@ -45,14 +47,17 @@ void loop() {
 
   if(result!= oldResult || counter%3 == 0)
   {
-    //lcd.begin(20, 4);
+    if(beginCounter%3 == 0) {
+      lcd.begin(20, 4);
+    }
     show(result);
+    beginCounter++;
   }
 
   counter++;
   oldResult = result;
   
-  delay(5000);
+  delay(10000);
 }
 
 String getInfo() {
