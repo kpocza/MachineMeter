@@ -1,12 +1,12 @@
 #include <SoftwareSerial.h>
-#include <LiquidCrystal.h>
+#include <LiquidCrystal_I2C.h>
 #include "WifiParameters.h"
 
 // test
-// LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
+//LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the default I2C bus address of the backpack-see article
 
 // prod
- LiquidCrystal lcd(2, 3, 4, 5, 11, 12);
+LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the default I2C bus address of the backpack-see article
 
 ///////////////////////////////////////
 // format of WifiParameters.h:
@@ -26,12 +26,14 @@ void setup() {
   Serial.begin(9600);
   ESP8266.begin(9600);
   lcd.begin(20, 4);
-  lcd.setCursor(0,0);
+  lcd.setBacklightPin(3,POSITIVE); // BL, BL_POL
+  lcd.setBacklight(HIGH);
+  lcd.home();
   lcd.print("Connecting");
   
   connectToWifi();
   lcd.begin(20, 4);
-  lcd.setCursor(0,0);
+  lcd.home();
   lcd.print("Connected ");
 
   counter = 0;
@@ -104,44 +106,36 @@ String getInfo() {
 
   //Serial.println(resp);
 
-  String relevant = "";
   short ipdIndex = -1;
   short lastStartIndex = -1;
   short idxIndex = -1;
   short rounds = 0;
   do {
     ipdIndex = resp.indexOf("+IPD", lastStartIndex!= -1 ? lastStartIndex : 0);
+    Serial.println(ipdIndex);
     if(ipdIndex != -1)
     {
       short startIdx = resp.indexOf(":", ipdIndex);
-      if(startIdx == -1)
-        return "Bad response";
-        
-      if(lastStartIndex!= -1)
-        relevant = relevant + resp.substring(lastStartIndex, ipdIndex);
-
-      lastStartIndex = startIdx + 1;
-    }
-    else
-    {
-      if(lastStartIndex!= -1)
-      {
-        short endIdx = resp.lastIndexOf("CLOSED");
-        relevant = relevant + resp.substring(lastStartIndex, endIdx-1);
-        break;
-      }
+      resp.remove(ipdIndex, startIdx - ipdIndex + 1);
     }
     rounds++;
     if(rounds > 5)
-      return "Bad response";
+      return "Bad response - 1";
   } while(ipdIndex!= -1);
   
-  short contentIdx = relevant.lastIndexOf("\r\n\r\n");
-  if(contentIdx == -1)
-    return "Bad response";
+  short endIdx = resp.lastIndexOf("CLOSED");
+  if(endIdx!= -1) {
+    resp.remove(endIdx-1);
+  }
 
-  resp = relevant.substring(contentIdx+4);
-  
+  //Serial.println(resp);
+
+  short contentIdx = resp.lastIndexOf("\r\n\r\n");
+  if(contentIdx == -1)
+    return "Bad response - 2";
+
+  resp = resp.substring(contentIdx+4);
+
   return resp;
 }
 
@@ -183,7 +177,7 @@ void show(String& result) {
 
     String part = result.substring(0, firstEnd);
     splitLines(part, line1, line2, 20);
-    lcd.setCursor(0,0);
+    lcd.home();
     lcd.print(line1);
     lcd.setCursor(0,1);
     lcd.print(line2);
