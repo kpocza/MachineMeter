@@ -42,14 +42,13 @@ void setup() {
   delay(1000);
 }
 
-
 void loop() {
   String result = getInfo();
   Serial.println(result);
 
   if(result!= oldResult || counter%3 == 0)
   {
-    if(beginCounter%3 == 0) {
+    if(beginCounter%15 == 0) {
       lcd.begin(20, 4);
     }
     show(result);
@@ -62,68 +61,79 @@ void loop() {
   delay(10000);
 }
 
+const String errorComm = "Comm error";
+const String errorServerNetwork = "Server/network error";
+const String badResponse1 = "Bad response - 1";
+const String badResponse2 = "Bad response - 2";
+
+const String tcpStart = String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT;
+
 String getInfo() {
   ESP8266.flush();
-  ESP8266.println(String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT);
+  ESP8266.println(tcpStart);
   delay(10);
   if(ESP8266.find("ERROR"))
   {
     Serial.println("AT+CIPSTART error");
-    return "Server/network error";
+    return errorServerNetwork;
   }
 
-  String resp="";
-  String getStr = "GET /info HTTP/1.0\r\n\r\n";
+  const String getStr = "GET /info HTTP/1.0\r\n\r\n";
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
   delay(100);
-  if(ESP8266.find(">"))
-  {
-    ESP8266.print(getStr);
-    Serial.println(getStr);
-
-    long int time = millis();
-    long int timeout = 1000;
-    int sizeLimit = 256;
-    int cnt = 0;
-    while(millis() - time < timeout && cnt < sizeLimit && !resp.endsWith("CLOSED"))
-    {
-      while (ESP8266.available() > 0 && !resp.endsWith("CLOSED")) 
-      {
-        char c = ESP8266.read();
-        resp += c;
-        cnt++;
-      }
-    }
-  }
-  else
+  if(!ESP8266.find(">"))
   {
     Serial.println("AT+CIPCLOSE");
     ESP8266.println("AT+CIPCLOSE");     
-    return "Comm error";
+    return errorComm;
+  }
+  
+  ESP8266.print(getStr);
+  //Serial.println(getStr);
+
+  const String closed = "CLOSED";
+  const long int timeout = 1000;
+  const int sizeLimit = 300;
+
+  String resp;
+  resp.reserve(sizeLimit);
+
+  long int time = millis();
+  int cnt = 0;
+  while(millis() - time < timeout && cnt < sizeLimit && !resp.endsWith(closed))
+  {
+    while (ESP8266.available() > 0 && cnt < sizeLimit && !resp.endsWith(closed)) 
+    {
+      char c = ESP8266.read();
+      resp += c;
+      cnt++;
+    }
   }
 
   //Serial.println(resp);
+  const String ipd = "+IPD";
+  const String colon = ":";
 
   short ipdIndex = -1;
   short lastStartIndex = -1;
   short idxIndex = -1;
   short rounds = 0;
   do {
-    ipdIndex = resp.indexOf("+IPD", lastStartIndex!= -1 ? lastStartIndex : 0);
-    Serial.println(ipdIndex);
+    ipdIndex = resp.indexOf(ipd, lastStartIndex!= -1 ? lastStartIndex : 0);
+    //Serial.println(ipdIndex);
     if(ipdIndex != -1)
     {
-      short startIdx = resp.indexOf(":", ipdIndex);
+      short startIdx = resp.indexOf(colon, ipdIndex);
       resp.remove(ipdIndex, startIdx - ipdIndex + 1);
     }
     rounds++;
     if(rounds > 5)
-      return "Bad response - 1";
+      return badResponse1;
   } while(ipdIndex!= -1);
   
-  short endIdx = resp.lastIndexOf("CLOSED");
+  short endIdx = resp.lastIndexOf(closed);
   if(endIdx!= -1) {
     resp.remove(endIdx-1);
   }
@@ -132,9 +142,10 @@ String getInfo() {
 
   short contentIdx = resp.lastIndexOf("\r\n\r\n");
   if(contentIdx == -1)
-    return "Bad response - 2";
+    return badResponse2;
 
-  resp = resp.substring(contentIdx+4);
+  resp.remove(0, contentIdx+4);
+  //Serial.println(resp);
 
   return resp;
 }
