@@ -19,7 +19,6 @@ LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the default I2C bus addres
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 int counter;
-int beginCounter;
 String oldResult;
 
 void setup() {
@@ -37,7 +36,6 @@ void setup() {
   lcd.print("Connected ");
 
   counter = 0;
-  beginCounter = 0;
   oldResult = "";
   delay(1000);
 }
@@ -48,11 +46,7 @@ void loop() {
 
   if(result!= oldResult || counter%3 == 0)
   {
-    if(beginCounter%15 == 0) {
-      lcd.begin(20, 4);
-    }
     show(result);
-    beginCounter++;
   }
 
   counter++;
