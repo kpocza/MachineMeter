@@ -404,6 +404,49 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 </deviceset>
 </devicesets>
 </library>
+<library name="SparkFun-PowerSymbols" urn="urn:adsk.eagle:library:530">
+<description>&lt;h3&gt;SparkFun Power Symbols&lt;/h3&gt;
+This library contains power, ground, and voltage-supply symbols.
+&lt;br&gt;
+&lt;br&gt;
+We've spent an enormous amount of time creating and checking these footprints and parts, but it is &lt;b&gt; the end user's responsibility&lt;/b&gt; to ensure correctness and suitablity for a given componet or application. 
+&lt;br&gt;
+&lt;br&gt;If you enjoy using this library, please buy one of our products at &lt;a href=" www.sparkfun.com"&gt;SparkFun.com&lt;/a&gt;.
+&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;Licensing:&lt;/b&gt; Creative Commons ShareAlike 4.0 International - https://creativecommons.org/licenses/by-sa/4.0/ 
+&lt;br&gt;
+&lt;br&gt;
+You are welcome to use this library for commercial purposes. For attribution, we ask that when you begin to sell your device using our footprint, you email us with a link to the product being sold. We want bragging rights that we helped (in a very small part) to create your 8th world wonder. We would like the opportunity to feature your device on our homepage.</description>
+<packages>
+</packages>
+<symbols>
+<symbol name="GND" urn="urn:adsk.eagle:symbol:39417/1" library_version="1">
+<description>&lt;h3&gt;Ground Supply (Earth Ground Symbol)&lt;/h3&gt;</description>
+<pin name="3.3V" x="0" y="2.54" visible="off" length="short" direction="sup" rot="R270"/>
+<wire x1="-2.032" y1="0" x2="2.032" y2="0" width="0.254" layer="94"/>
+<wire x1="-1.27" y1="-0.762" x2="1.27" y2="-0.762" width="0.254" layer="94"/>
+<wire x1="-0.508" y1="-1.524" x2="0.508" y2="-1.524" width="0.254" layer="94"/>
+<text x="0" y="-1.778" size="1.778" layer="96" align="top-center">&gt;VALUE</text>
+</symbol>
+</symbols>
+<devicesets>
+<deviceset name="GND2" urn="urn:adsk.eagle:component:39442/1" prefix="GND" library_version="1">
+<description>&lt;h3&gt;Ground Supply (Earth Ground style)&lt;/h3&gt;
+&lt;p&gt;Ground supply with a traditional "earth ground" symbol.&lt;/p&gt;</description>
+<gates>
+<gate name="G$1" symbol="GND" x="2.54" y="0"/>
+</gates>
+<devices>
+<device name="">
+<technologies>
+<technology name=""/>
+</technologies>
+</device>
+</devices>
+</deviceset>
+</devicesets>
+</library>
 </libraries>
 <attributes>
 </attributes>
@@ -418,14 +461,24 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 <part name="SWITCH2" library="BeagleBone_Blue_R3" library_urn="urn:adsk.eagle:library:5828899" deviceset="RS032G05A3SM-SPST-MOMENTARY-SW" device="SMD-1101NE" package3d_urn="urn:adsk.eagle:package:5829833/3" value=""/>
 <part name="SOCKET1" library="con-avx" library_urn="urn:adsk.eagle:library:129" deviceset="009175003" device="" package3d_urn="urn:adsk.eagle:package:6128/1" value=""/>
 <part name="SOCKET2" library="con-avx" library_urn="urn:adsk.eagle:library:129" deviceset="009175003" device="" package3d_urn="urn:adsk.eagle:package:6128/1" value=""/>
+<part name="GND" library="SparkFun-PowerSymbols" library_urn="urn:adsk.eagle:library:530" deviceset="GND2" device="" value="GND"/>
 </parts>
 <sheets>
 <sheet>
 <plain>
 <text x="-20.32" y="-5.08" size="1.778" layer="91">L</text>
 <text x="50.8" y="-5.08" size="1.778" layer="91">N</text>
-<text x="38.1" y="-5.08" size="1.778" layer="91">GND</text>
-<text x="9.398" y="26.162" size="1.778" layer="91">AC/DC</text>
+<text x="8.636" y="19.812" size="1.778" layer="91">AC/DC
+Adapter
+5V</text>
+<text x="10.16" y="76.2" size="1.778" layer="91">YHDC SC
+Transformer
+Washer</text>
+<text x="10.16" y="48.26" size="1.778" layer="91">YHDC SC
+Transformer
+Dryer</text>
+<text x="27.94" y="91.44" size="1.778" layer="91">Washer</text>
+<text x="27.94" y="63.5" size="1.778" layer="91">Dryer</text>
 </plain>
 <instances>
 <instance part="SWITCH1" gate="G$1" x="-2.54" y="81.28" smashed="yes">
@@ -443,6 +496,9 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 <instance part="SOCKET2" gate="G$1" x="27.94" y="58.42" smashed="yes" rot="R90">
 <attribute name="NAME" x="25.4" y="68.58" size="1.778" layer="95" rot="R270"/>
 <attribute name="VALUE" x="36.83" y="58.42" size="1.778" layer="96" rot="R90"/>
+</instance>
+<instance part="GND" gate="G$1" x="40.64" y="-2.54" smashed="yes">
+<attribute name="VALUE" x="40.64" y="-4.318" size="1.778" layer="96" align="top-center"/>
 </instance>
 </instances>
 <busses>
@@ -490,9 +546,10 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 <junction x="50.8" y="25.4"/>
 </segment>
 </net>
-<net name="N$5" class="0">
+<net name="3.3V" class="0">
 <segment>
-<wire x1="40.64" y1="-2.54" x2="40.64" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="-2.54" x2="40.64" y2="0" width="0.1524" layer="91"/>
+<wire x1="40.64" y1="0" x2="40.64" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="40.64" y1="45.72" x2="30.48" y2="45.72" width="0.1524" layer="91"/>
 <pinref part="SOCKET2" gate="G$1" pin="2@1"/>
 <wire x1="30.48" y1="45.72" x2="30.48" y2="53.34" width="0.1524" layer="91"/>
@@ -501,6 +558,8 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 <wire x1="40.64" y1="73.66" x2="30.48" y2="73.66" width="0.1524" layer="91"/>
 <pinref part="SOCKET1" gate="G$1" pin="2@1"/>
 <wire x1="30.48" y1="73.66" x2="30.48" y2="81.28" width="0.1524" layer="91"/>
+<pinref part="GND" gate="G$1" pin="3.3V"/>
+<junction x="40.64" y="0"/>
 </segment>
 </net>
 </nets>
@@ -509,6 +568,10 @@ Source: http://www.avx.com/docs/Catalogs/9175.pdf</description>
 </schematic>
 </drawing>
 <compatibility>
+<note version="6.3" minversion="6.2.2" severity="warning">
+Since Version 6.2.2 text objects can contain more than one line,
+which will not be processed correctly with this version.
+</note>
 <note version="8.2" severity="warning">
 Since Version 8.2, EAGLE supports online libraries. The ids
 of those online libraries will not be understood (or retained)

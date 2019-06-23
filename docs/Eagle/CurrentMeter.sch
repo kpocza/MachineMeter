@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.1">
+<eagle version="9.4.2">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1625,9 +1625,9 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <attribute name="NAME" x="82.3214" y="31.75" size="1.778" layer="95" rot="R90"/>
 <attribute name="VALUE" x="87.122" y="31.75" size="1.778" layer="96" rot="R90"/>
 </instance>
-<instance part="ESP8266" gate="G$1" x="180.34" y="71.12" smashed="yes">
-<attribute name="NAME" x="167.64" y="81.28" size="1.778" layer="95"/>
-<attribute name="VALUE" x="167.64" y="55.88" size="1.778" layer="96"/>
+<instance part="ESP8266" gate="G$1" x="180.34" y="66.04" smashed="yes">
+<attribute name="NAME" x="167.64" y="76.2" size="1.778" layer="95"/>
+<attribute name="VALUE" x="167.64" y="50.8" size="1.778" layer="96"/>
 </instance>
 </instances>
 <busses>
@@ -1692,14 +1692,14 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <wire x1="111.76" y1="33.02" x2="111.76" y2="12.7" width="0.1524" layer="91"/>
 <junction x="111.76" y="12.7"/>
 <wire x1="215.9" y1="12.7" x2="203.2" y2="12.7" width="0.1524" layer="91"/>
-<wire x1="203.2" y1="12.7" x2="203.2" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="12.7" x2="203.2" y2="55.88" width="0.1524" layer="91"/>
 <junction x="203.2" y="12.7"/>
 <pinref part="ESP8266" gate="G$1" pin="GND"/>
-<wire x1="203.2" y1="60.96" x2="195.58" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="203.2" y1="60.96" x2="203.2" y2="63.5" width="0.1524" layer="91"/>
-<junction x="203.2" y="60.96"/>
+<wire x1="203.2" y1="55.88" x2="195.58" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="55.88" x2="203.2" y2="58.42" width="0.1524" layer="91"/>
+<junction x="203.2" y="55.88"/>
 <pinref part="ESP8266" gate="G$1" pin="GPIO15"/>
-<wire x1="203.2" y1="63.5" x2="195.58" y2="63.5" width="0.1524" layer="91"/>
+<wire x1="203.2" y1="58.42" x2="195.58" y2="58.42" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="N$5" class="0">
@@ -1743,35 +1743,32 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <wire x1="116.84" y1="60.96" x2="114.3" y2="60.96" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="60.96" x2="114.3" y2="96.52" width="0.1524" layer="91"/>
 <wire x1="114.3" y1="96.52" x2="157.48" y2="96.52" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="96.52" x2="157.48" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="96.52" x2="157.48" y2="68.58" width="0.1524" layer="91"/>
 <pinref part="ESP8266" gate="G$1" pin="VCC"/>
-<wire x1="157.48" y1="73.66" x2="157.48" y2="60.96" width="0.1524" layer="91"/>
-<wire x1="157.48" y1="60.96" x2="162.56" y2="60.96" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="68.58" x2="157.48" y2="55.88" width="0.1524" layer="91"/>
+<wire x1="157.48" y1="55.88" x2="162.56" y2="55.88" width="0.1524" layer="91"/>
 <pinref part="ESP8266" gate="G$1" pin="CH_PD"/>
-<wire x1="162.56" y1="73.66" x2="157.48" y2="73.66" width="0.1524" layer="91"/>
-<junction x="157.48" y="73.66"/>
+<wire x1="162.56" y1="68.58" x2="157.48" y2="68.58" width="0.1524" layer="91"/>
+<junction x="157.48" y="68.58"/>
 </segment>
 </net>
 <net name="N$8" class="0">
 <segment>
 <pinref part="B1" gate="G$1" pin="D2"/>
-<wire x1="142.24" y1="83.82" x2="144.78" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="83.82" x2="144.78" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="144.78" y1="88.9" x2="203.2" y2="88.9" width="0.1524" layer="91"/>
-<wire x1="203.2" y1="88.9" x2="203.2" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="144.78" y1="83.82" x2="142.24" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="83.82" x2="200.66" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="200.66" y1="83.82" x2="200.66" y2="71.12" width="0.1524" layer="91"/>
 <pinref part="ESP8266" gate="G$1" pin="RX"/>
-<wire x1="203.2" y1="76.2" x2="195.58" y2="76.2" width="0.1524" layer="91"/>
+<wire x1="200.66" y1="71.12" x2="195.58" y2="71.12" width="0.1524" layer="91"/>
 </segment>
 </net>
 <net name="ESP8266" class="0">
 <segment>
 <pinref part="B1" gate="G$1" pin="*D3"/>
-<wire x1="142.24" y1="81.28" x2="147.32" y2="81.28" width="0.1524" layer="91"/>
-<wire x1="147.32" y1="81.28" x2="147.32" y2="83.82" width="0.1524" layer="91"/>
-<wire x1="147.32" y1="83.82" x2="198.12" y2="83.82" width="0.1524" layer="91"/>
+<wire x1="142.24" y1="81.28" x2="198.12" y2="81.28" width="0.1524" layer="91"/>
 <pinref part="ESP8266" gate="G$1" pin="TX"/>
-<wire x1="198.12" y1="83.82" x2="198.12" y2="78.74" width="0.1524" layer="91"/>
-<wire x1="198.12" y1="78.74" x2="195.58" y2="78.74" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="81.28" x2="198.12" y2="73.66" width="0.1524" layer="91"/>
+<wire x1="198.12" y1="73.66" x2="195.58" y2="73.66" width="0.1524" layer="91"/>
 </segment>
 </net>
 </nets>
