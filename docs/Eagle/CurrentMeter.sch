@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE eagle SYSTEM "eagle.dtd">
-<eagle version="9.4.2">
+<eagle version="9.4.1">
 <drawing>
 <settings>
 <setting alwaysvectorfont="no"/>
@@ -1666,7 +1666,8 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <net name="N$3" class="0">
 <segment>
 <pinref part="R1" gate="G$1" pin="2"/>
-<wire x1="63.5" y1="101.6" x2="111.76" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="63.5" y1="101.6" x2="83.82" y2="101.6" width="0.1524" layer="91"/>
+<wire x1="83.82" y1="101.6" x2="111.76" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="111.76" y1="101.6" x2="215.9" y2="101.6" width="0.1524" layer="91"/>
 <wire x1="63.5" y1="83.82" x2="63.5" y2="101.6" width="0.1524" layer="91"/>
 <junction x="63.5" y="101.6"/>
@@ -1674,6 +1675,9 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <junction x="111.76" y="101.6"/>
 <pinref part="B1" gate="G$1" pin="VCC"/>
 <wire x1="111.76" y1="45.72" x2="116.84" y2="45.72" width="0.1524" layer="91"/>
+<pinref part="R4" gate="G$1" pin="2"/>
+<wire x1="83.82" y1="40.64" x2="83.82" y2="101.6" width="0.1524" layer="91"/>
+<junction x="83.82" y="101.6"/>
 </segment>
 </net>
 <net name="N$4" class="0">
@@ -1724,17 +1728,13 @@ Arduino Uno R3 Compatible Footprint. Matches PCB size of the original board.
 <segment>
 <pinref part="YDHC_SCT-013-030" gate="G$1" pin="P$3"/>
 <wire x1="22.86" y1="45.72" x2="43.18" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="43.18" y1="45.72" x2="83.82" y2="45.72" width="0.1524" layer="91"/>
-<wire x1="83.82" y1="45.72" x2="99.06" y2="45.72" width="0.1524" layer="91"/>
+<wire x1="43.18" y1="45.72" x2="99.06" y2="45.72" width="0.1524" layer="91"/>
 <wire x1="99.06" y1="45.72" x2="99.06" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="B1" gate="G$1" pin="A2"/>
 <wire x1="99.06" y1="83.82" x2="116.84" y2="83.82" width="0.1524" layer="91"/>
 <pinref part="RB2" gate="G$1" pin="1"/>
 <wire x1="43.18" y1="40.64" x2="43.18" y2="45.72" width="0.1524" layer="91"/>
 <junction x="43.18" y="45.72"/>
-<pinref part="R4" gate="G$1" pin="2"/>
-<wire x1="83.82" y1="40.64" x2="83.82" y2="45.72" width="0.1524" layer="91"/>
-<junction x="83.82" y="45.72"/>
 </segment>
 </net>
 <net name="N$7" class="0">
