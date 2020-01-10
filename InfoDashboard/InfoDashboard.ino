@@ -16,10 +16,22 @@ LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the default I2C bus addres
 
 #define SERVER_IP "192.168.0.20"
 #define SERVER_PORT "5000"
+#define SERVER_PORT_CIRCULATOR "5001"
+
+#define SHORT_CIRCULATION_PIN 10
+#define LONG_CIRCULATION_PIN 11
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 int counter;
 String oldResult;
+
+enum CirculationType {
+  None = 0,
+  Short = 1,
+  Long = 2
+};
+
+volatile CirculationType circulationType = None;
 
 void setup() {
   Serial.begin(9600);
@@ -37,6 +49,9 @@ void setup() {
 
   counter = 0;
   oldResult = "";
+
+  attachInterrupt(digitalPinToInterrupt(SHORT_CIRCULATION_PIN), shortCirculationStart, RISING);
+  attachInterrupt(digitalPinToInterrupt(LONG_CIRCULATION_PIN), longCirculationStart, RISING);
   delay(1000);
 }
 
@@ -51,6 +66,8 @@ void loop() {
 
   counter++;
   oldResult = result;
+
+  signalCirculation();
   
   delay(10000);
 }
@@ -60,11 +77,15 @@ const String errorServerNetwork = "Server/network error";
 const String badResponse1 = "Bad response - 1";
 const String badResponse2 = "Bad response - 2";
 
-const String tcpStart = String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",") + SERVER_PORT;
+const String tcpStart = String("AT+CIPSTART=\"TCP\",\"") + SERVER_IP + String("\",");
 
 String getInfo() {
+  return getRequest(SERVER_PORT, "/info");
+}
+
+String getRequest(String serverPort, String url) {
   ESP8266.flush();
-  ESP8266.println(tcpStart);
+  ESP8266.println(tcpStart + serverPort);
   delay(10);
   if(ESP8266.find("ERROR"))
   {
@@ -72,7 +93,7 @@ String getInfo() {
     return errorServerNetwork;
   }
 
-  const String getStr = "GET /info HTTP/1.0\r\n\r\n";
+  const String getStr = "GET " + url + " HTTP/1.0\r\n\r\n";
 
   ESP8266.println("AT+CIPSEND="+String(getStr.length()));
 
@@ -195,5 +216,27 @@ void show(String& result) {
     lcd.print(line2);
   } else {
     lcd.print(result);
+  }
+}
+
+void shortCirculationStart() {
+  circulationType = Short;
+}
+
+void longCirculationStart() {
+  circulationType = Long;
+}
+
+void signalCirculation() {
+  if(circulationType == Short) {
+    circulationType = None;
+    getRequest(SERVER_PORT_CIRCULATOR, "/short");
+    return;
+  }
+  
+  if(circulationType == Long) {
+    circulationType = None;
+    getRequest(SERVER_PORT_CIRCULATOR, "/long");
+    return;
   }
 }
