@@ -1,15 +1,20 @@
 #!/usr/bin/python
+import os
 from flask import Flask, request
 from datetime import datetime, timedelta
 
 app = Flask(__name__)
 
-endTime = datetime.utcnow()
-
 @app.route('/info', methods=['GET'])
 def info():
-	global endTime
-	return "1" if datetime.utcnow() < endTime else "0"
+    if os.path.exists("endtime.txt"):
+        f = open("endtime.txt", "r")
+        endSeconds = float(f.read())
+        f.close()
+
+        return "1" if totalSeconds(datetime.utcnow()) < endSeconds else "0"
+    else:
+        return "0"
 
 @app.route('/short', methods=['GET'])
 def shortCirculation():
@@ -22,8 +27,13 @@ def longCirculation():
 	return "OK"
 
 def setEnd(minutes):
-	global endTime
 	endTime = datetime.utcnow() + timedelta(minutes = minutes)
+        f = open("endtime.txt", "w")
+        f.write(str(totalSeconds(endTime)))
+        f.close()
+
+def totalSeconds(d):
+    return (d - datetime(1,1,1)).total_seconds()
 
 if __name__ == '__main__':
 	app.run(debug=True,host="0.0.0.0",port=5001)
