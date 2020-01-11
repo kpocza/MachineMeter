@@ -4,7 +4,7 @@
 #define SERVER_IP "192.168.0.20"
 #define SERVER_PORT "5001"
 
-#define RELAY_PIN 6
+#define RELAY_PIN 10
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 
@@ -101,10 +101,8 @@ String getInfo() {
   
   short endIdx = resp.lastIndexOf(closed);
   if(endIdx!= -1) {
-    resp.remove(endIdx-1);
+    resp.remove(endIdx);
   }
-
-  //Serial.println(resp);
 
   short contentIdx = resp.lastIndexOf("\r\n\r\n");
   if(contentIdx == -1)
@@ -116,7 +114,7 @@ String getInfo() {
   return resp;
 }
 void setCirculator(bool state) {
-    digitalWrite(RELAY_PIN, state ? HIGH : LOW);
+    digitalWrite(RELAY_PIN, state ? LOW : HIGH);
 }
 
 void connectToWifi() {
