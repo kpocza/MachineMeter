@@ -5,10 +5,17 @@
 #define SERVER_PORT "5001"
 
 #define RELAY_PIN 10
+#define FALLBACK_TO_LAST_LIMIT 3
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 
+String lastResult;
+int fallbackCounter;
+
 void setup() {
+  lastResult = "0";
+  fallbackCounter = 0;
+
   setCirculator(false);
   pinMode(RELAY_PIN, OUTPUT);
   
@@ -22,6 +29,16 @@ void setup() {
 void loop() {
   String result = getInfo();
   Serial.println(result);
+
+  if(result != "0" && result != "1") {
+    if(fallbackCounter < FALLBACK_TO_LAST_LIMIT) {
+      result = lastResult;
+    }
+    fallbackCounter++;
+  } else {
+    fallbackCounter = 0;
+    lastResult = result;
+  }
 
   setCirculator(result == "1");
 
@@ -113,6 +130,7 @@ String getInfo() {
 
   return resp;
 }
+
 void setCirculator(bool state) {
     digitalWrite(RELAY_PIN, state ? LOW : HIGH);
 }

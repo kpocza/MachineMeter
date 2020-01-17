@@ -18,8 +18,8 @@ LiquidCrystal_I2C lcd(0x27,2,1,0,4,5,6,7); // 0x27 is the default I2C bus addres
 #define SERVER_PORT "5000"
 #define SERVER_PORT_CIRCULATOR "5001"
 
-#define SHORT_CIRCULATION_PIN 10
-#define LONG_CIRCULATION_PIN 11
+#define SHORT_CIRCULATION_PIN 2
+#define LONG_CIRCULATION_PIN 3
 
 SoftwareSerial ESP8266(8, 9); // Rx,  Tx
 int counter;
@@ -50,6 +50,8 @@ void setup() {
   counter = 0;
   oldResult = "";
 
+  pinMode(SHORT_CIRCULATION_PIN, INPUT);
+  pinMode(LONG_CIRCULATION_PIN, INPUT);
   attachInterrupt(digitalPinToInterrupt(SHORT_CIRCULATION_PIN), shortCirculationStart, RISING);
   attachInterrupt(digitalPinToInterrupt(LONG_CIRCULATION_PIN), longCirculationStart, RISING);
   delay(1000);
@@ -67,7 +69,9 @@ void loop() {
   counter++;
   oldResult = result;
 
-  signalCirculation();
+  String signalResult = signalCirculation();
+
+  showSignalResult(signalResult);
   
   delay(10000);
 }
@@ -219,6 +223,14 @@ void show(String& result) {
   }
 }
 
+void showSignalResult(String& signalResult) {
+  if(signalResult!= "") {
+    lcd.clear();
+    lcd.home();
+    lcd.print(signalResult);
+  }
+}
+
 void shortCirculationStart() {
   circulationType = Short;
 }
@@ -227,16 +239,20 @@ void longCirculationStart() {
   circulationType = Long;
 }
 
-void signalCirculation() {
+String signalCirculation() {
   if(circulationType == Short) {
     circulationType = None;
-    getRequest(SERVER_PORT_CIRCULATOR, "/short");
-    return;
+    String res = getRequest(SERVER_PORT_CIRCULATOR, "/short");
+    Serial.print("short " + res);
+    return "15 perces porges: " + res;
   }
   
   if(circulationType == Long) {
     circulationType = None;
-    getRequest(SERVER_PORT_CIRCULATOR, "/long");
-    return;
+    String res = getRequest(SERVER_PORT_CIRCULATOR, "/long");
+    Serial.print("long " + res);
+    return "30 perces porges: " + res;
   }
+
+  return "";
 }
