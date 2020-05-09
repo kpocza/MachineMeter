@@ -250,7 +250,7 @@ The service is listening on port no 5000 and stores data in an Sqlite db.
 
 To prepare the required python packages run preparepkg.sh, while the database can be initialized with the preparedb.py.
 
-Gunicorn.service should be installed as a systemd service in production (app.py should be run for development).
+measureserver-gunicorn.service should be installed as a systemd service in production (app.py should be run for development).
 
 The /webinfo endpoint is suitable for mobile browser based consumption.
 
@@ -315,3 +315,18 @@ Required additional elements:
 
 ### Extended schematic
 ![](docs/Eagle/InfoDashboardWithCircoSwitch.png)
+
+REST service
+-------------------------
+
+The Raspberry Pi 3 part requires:
+
+-   Python
+-   Flask
+-   Gunicorn
+
+The service is listening on port no 5001 and stores the data in a single disk file.
+
+To prepare the required python packages run preparepkg.sh.
+
+circulatorserver-gunicorn.service should be installed as a systemd service in production (app.py should be run for development).
