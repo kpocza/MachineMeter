@@ -1,7 +1,9 @@
-Machine meter
+Machine meter + warm water pump switch
 =============
 
 This hardware & software solution is designated to watch and signal the end of washer and dryer programs.
+
+Later this solution has been extended to support warm water circulator pump switching.
 
 The solution
 ------------
@@ -144,6 +146,10 @@ The full construction looks like as follows:
 
 ![](docs/18measureconstr6.jpg)
 
+Later a 3.3V voltage regulator has been added in the same way as for the info dashboard to power the ESP8266 WiFi receiver:
+
+![](docs/18measureconstr62.jpg)
+
 Testing the current measurer device:
 
 ![](docs/19measureconstr7.jpg)
@@ -161,6 +167,8 @@ Required elements:
 -   Arduino Nano
 -   ESP8266 (ESP-07)
 -   Appropriate WiFi antenna
+-   3.3V voltage regulator
+-   100 nF and 10 mF capacitors
 -   Test panel (630/200)
 -   Wires (d=0.5mm)
 -   CurrentMeter Arduino project
@@ -246,3 +254,64 @@ Gunicorn.service should be installed as a systemd service in production (app.py 
 
 The /webinfo endpoint is suitable for mobile browser based consumption.
 
+
+
+# Warm water circulator switch
+
+*Disclaimer: this description is not yet fully detailed.*
+
+Support switching on warm water pump for 15 min and 30 min to reduce energy consumption... etc... blablabla...
+
+## Working stuff
+
+Display extended with two push buttons. The left one switches on the warm water pump on 
+for 15 min the right one for 30 min.
+![](docs/30displayandswitch.jpg)
+
+Warm water pump (circo) controller in action:
+![](docs/31controller1.jpg)
+Warm water pump (circo) controller in action 2:
+![](docs/32controller2.jpg)
+
+## Controller building
+Proof of concept of the controller. Switching a relay.
+![](docs/33controllerpoc1.jpg)
+The PoC was completed with christmas tree lights:
+![](docs/34controllerpoc2.jpg)
+Completed consturction of the controller:
+![](docs/35controller1.jpg)
+Cover on:
+![](docs/36controller2.jpg)
+
+Required elements:
+
+- Suitable plastic box
+- AC/DC adapter (->5V)
+- Arduino Nano
+- ESP8266 WiFi module
+- 3.3V voltage regulator
+- 100 nF and 10 mF capacitors
+- Wires
+- Relay (opto 1ch 5V -> 230V)
+- Indicator led
+- 230V plug
+
+### Controller schematic
+![](docs/Eagle/CircoController.png)
+
+## Display extension with push buttons
+
+Display and switch extension with two push buttons 1:
+![](docs/37displayandswitch1.jpg)
+Display and switch extension with two push buttons 2:
+![](docs/38displayandswitch2.jpg)
+
+Required additional elements:
+
+- 2 x 10 K Ohm resistors
+- 2 push buttons
+- Wires
+- support for the buttons
+
+### Extended schematic
+![](docs/Eagle/InfoDashboardWithCircoSwitch.png)
